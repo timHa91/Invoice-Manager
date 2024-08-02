@@ -13,14 +13,15 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import static com.tim.securecapita.query.RoleQuery.INSERT_ROLE_TO_USER_QUERY;
+import static com.tim.securecapita.query.RoleQuery.SELECT_ROLE_BY_NAME_QUERY;
+import static java.util.Objects.requireNonNull;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
 public class RoleRepositoryImpl implements RoleRepository<Role> {
-    private static final String SELECT_ROLE_BY_NAME_QUERY = "";
-    private static final String INSERT_ROLE_TO_USER_QUERY = "";
     private final NamedParameterJdbcTemplate jdbc;
 
     @Override
@@ -52,11 +53,12 @@ public class RoleRepositoryImpl implements RoleRepository<Role> {
     public void addRoleToUser(Long userId, String roleName) {
         log.info("Adding role {} to user id: {}", roleName, userId);
         try {
-            Role role = jdbc.queryForObject(SELECT_ROLE_BY_NAME_QUERY, Map.of("roleName:", roleName), new RoleRowMapper());
-            jdbc.update(INSERT_ROLE_TO_USER_QUERY, Map.of("userId", userId, "roleId", Objects.requireNonNull(role).getId()));
+            Role role = jdbc.queryForObject(SELECT_ROLE_BY_NAME_QUERY, Map.of("roleName", roleName), new RoleRowMapper());
+            jdbc.update(INSERT_ROLE_TO_USER_QUERY, Map.of("userId", userId, "roleId", requireNonNull(role).getId()));
         } catch (EmptyResultDataAccessException e) {
             throw new ApiException("No role found by name: " + roleName);
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new ApiException("An error occurred while adding role " + roleName + " to user: " + userId);
         }
     }
