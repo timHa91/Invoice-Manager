@@ -20,7 +20,15 @@ export class UserService {
         tap(console.log),
         catchError(this.handleError)
       );
-}
+  }
+
+  profile$ = () => {
+    return this.http.get<Observable<CustomHttpResponse<Profile>>>(`${this.server}/user/profile`)
+      .pipe(
+        tap(console.log),
+        catchError(this.handleError)
+      )
+  }
   private handleError(error: HttpErrorResponse) {
       let errorMessage: string;
       if(error.error instanceof ErrorEvent) {
