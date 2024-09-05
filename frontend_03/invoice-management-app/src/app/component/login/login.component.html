@@ -1,0 +1,45 @@
+<section *ngIf="(loginState$ | async) as state">
+  <div *ngIf="!state.loginSuccess" class="container">
+    <div class="row justify-content-center my-5">
+      <div class="col-md-6" style="margin-top: 50px;">
+        <div class="card">
+          <div class="card-body">
+            <div class="text-center">
+              <h2><i style="margin-right: 5px;" class="bi bi-safe"></i>SecureCapita</h2>
+              <h5 class="card-title mt-4 mb-5">Account Login</h5>
+            </div>
+            <div *ngIf="state.dataState === DataState.ERROR" class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert">
+              {{ state.error }}
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+              <div class="form-outline mb-4">
+                <label class="form-label">Email Address</label>
+                <input [disabled]="state.dataState === DataState.LOADING" ngModel type="email" name="email" class="form-control" required>
+              </div>
+              <div class="form-outline mb-4">
+                <label class="form-label">Password</label>
+                <input [disabled]="state.dataState === DataState.LOADING" type="password" name="password" class="form-control" ngModel required>
+              </div>
+              <div class="d-flex justify-content-center mb-4">
+                <button [disabled]="state.dataState === DataState.LOADING || loginForm.invalid || loginForm.pristine" type="submit" class="btn btn-primary">
+                  <span *ngIf="state.dataState === DataState.LOADING" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+                  <span *ngIf="state.dataState === DataState.LOADING">Loading...</span>
+                  <span *ngIf="!(state.dataState === DataState.LOADING)">Log in</span>
+                </button>
+              </div>
+            </form>
+            <div class="row mb-4">
+              <div class="col d-flex justify-content-center">
+                <a [ngStyle]="{'pointer-events': state.dataState === DataState.LOADING ? 'none': ''}" routerLink="/register">Create an Account</a>
+              </div>
+              <div class="col">
+                <a [ngStyle]="{'pointer-events': state.dataState === DataState.LOADING ? 'none': ''}" routerLink="/resetpassword">Forgot password?</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
